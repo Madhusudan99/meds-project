@@ -2,18 +2,16 @@ import speech_recognition as sr
 import sms
 import formatting
 
-class GSpeech:
+class HiddenMarkovModel:
     def __init__(self):
         self.r = sr.Recognizer()
-        self.text = None
-    def recognize(self):
+    def recognize(self, mobile_number):
         with sr.Microphone() as source:
             try:
                 audio = self.r.listen(source, phrase_time_limit=6)
                 predicted_string = self.r.recognize_google(audio)
-                sms.send_sms(text= formatting.format(predicted_string))
-                self.text = predicted_string
-                return predicted_string
+                sms.send_sms(text= formatting.format(predicted_string), mobile_number=mobile_number)
+                return predicted_string, formatting.format(predicted_string)
             except sr.WaitTimeoutError:
                 return "Say Something....\nWhat are you waiting for"
     def s_recognize(self):
@@ -21,7 +19,6 @@ class GSpeech:
             try:
                 audio = self.r.listen(source, phrase_time_limit=6)
                 predicted_string = self.r.recognize_sphinx(audio)
-                self.text = predicted_string
                 return predicted_string
             except:
                 return "Invalid Input\nSomething went wrong"
@@ -30,7 +27,7 @@ if __name__ == "__main__":
     drugs = ['paracetamol']
     frequency = ['1', '2', '3', '4', '5', 'one', 'two', 'three']
     days_week = ['days', 'week', 'weeks']
-    speech_obj = GSpeech()
+    speech_obj = HiddenMarkovModel()
     text = speech_obj.recognize()
     print(text)
     # elements = text.lower().split()
